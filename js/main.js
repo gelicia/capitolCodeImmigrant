@@ -100,27 +100,34 @@ function loadMap(){
 }
 
 function drawData(){
-	countryData.sort(function(a, b) {
-		if (a.immCount > b.immCount){
+	//several countries have two MN names for one map name (like former countries)
+	var nestedCountryData = d3.nest().key(function(d){return d.CountryNameMap;}).entries(countryData);
+
+	for (var i = 0; i < nestedCountryData.length; i++) {
+		nestedCountryData[i].sumImmCount = d3.sum(nestedCountryData[i].values, function(d){return d.immCount;});
+	}
+
+	nestedCountryData.sort(function(a, b) {
+		if (a.sumImmCount > b.sumImmCount){
 			return -1;
 		}
-		else if (a.immCount < b.immCount){
+		else if (a.sumImmCount < b.sumImmCount){
 			return 1;
 		}
 		return 0;
 	});
 
-	var dataRange = d3.extent(countryData, function(d){return d.immCount;});
-	var colorRange = d3.scale.linear().domain(dataRange).range(['#CCC', '#6B66D4']);
+	var dataRange = d3.extent(nestedCountryData, function(d){return d.sumImmCount;});
+	var colorRange = d3.scale.linear().domain(dataRange).range(['#CCC', '#69D2E7']);
 
-	for (var i = 0; i < countryData.length; i++) {	
-		d3.select("#m_" + countryData[i].CountryID).transition().duration(500).attr({
-			fill: !isNaN(countryData[i].immCount) ? colorRange(countryData[i].immCount) : '#CCC'
+	for (var i = 0; i < nestedCountryData.length; i++) {	
+		d3.select("#m_" + nestedCountryData[i].values[0].CountryID).transition().duration(500).attr({
+			fill: !isNaN(nestedCountryData[i].sumImmCount) ? colorRange(nestedCountryData[i].sumImmCount) : '#CCC'
 		});
 	}	
 
 	d3.select("#year").text(thisYear);
-	d3.select("#extent").text("There was " + continentData["All Countries"] + " total immigrants for this year. The country with the most was " + countryData[0].CountryNameMap + " with " + countryData[0].immCount + " immigrants moving to Minnesota.");
+	d3.select("#extent").text("There was " + continentData["All Countries"] + " total immigrants for this year. The country with the most was " + nestedCountryData[0].key + " with " + nestedCountryData[0].sumImmCount + " immigrants moving to Minnesota.");
 }
 
 function changeYear(year){
