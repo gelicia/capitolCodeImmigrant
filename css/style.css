@@ -105,7 +105,7 @@ div#countryHeaderInfo{
 #mapDiv {
 	z-index: 1;
 	position: absolute;
-	top: 0;
+	top: 50;
 }
 
 svg#mapMain {

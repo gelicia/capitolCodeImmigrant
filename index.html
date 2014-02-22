@@ -21,7 +21,7 @@
     <script type = "text/javascript" src="js/main.js"></script>
   </head> 
 
-  <body onload="loadData();">
+  <body onload="loadData(2010);">
    <h1>Immigration to Minnesota</h1>
     <div id="left"></div>
     <div id="content">
@@ -29,6 +29,34 @@
         <p>Seitan meggings cred cliche, YOLO hoodie gluten-free. </p>
       </div>
       <div id="vizContent">
+        <div>
+          <!--yes i know, please dont judge me on this-->
+          <button name="b_1990" onclick="changeYear(1990)">1990</button>
+          <button name="b_1991" onclick="changeYear(1991)">1991</button>
+          <button name="b_1992" onclick="changeYear(1992)">1992</button>
+          <button name="b_1993" onclick="changeYear(1993)">1993</button>
+          <button name="b_1994" onclick="changeYear(1994)">1994</button>
+          <button name="b_1995" onclick="changeYear(1995)">1995</button>
+          <button name="b_1990" onclick="changeYear(1996)">1996</button>
+          <button name="b_1991" onclick="changeYear(1997)">1997</button>
+          <button name="b_1992" onclick="changeYear(1998)">1998</button>
+          <button name="b_1993" onclick="changeYear(1999)">1999</button>
+          <button name="b_1994" onclick="changeYear(2000)">2000</button>
+          <button name="b_1994" onclick="changeYear(2001)">2001</button>
+          <button name="b_1991" onclick="changeYear(2002)">2002</button>
+          <button name="b_1992" onclick="changeYear(2003)">2003</button>
+          <button name="b_1993" onclick="changeYear(2004)">2004</button>
+          <button name="b_1994" onclick="changeYear(2005)">2005</button>
+          <button name="b_1995" onclick="changeYear(2006)">2006</button>
+          <button name="b_1990" onclick="changeYear(2007)">2007</button>
+          <button name="b_1991" onclick="changeYear(2008)">2008</button>
+          <button name="b_1992" onclick="changeYear(2009)">2009</button>
+          <button name="b_1993" onclick="changeYear(2010)">2010</button>
+        </div>
+        <div>
+          <h2 id="year"></h2>
+          <h3 id="extent"></h3>
+        </div>
         <div id="mapDiv">
           <svg id="mapMain"></svg>
         </div>

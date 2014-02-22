@@ -1,7 +1,7 @@
 var minLongLat = [46.0000,94.0000];
-var gl_year = 2010;
 var continentData;
 var countryData;
+var thisYear;
 
 d3.selection.prototype.moveToFront = function() {
   return this.each(function(){
@@ -9,8 +9,8 @@ d3.selection.prototype.moveToFront = function() {
   });
 };
 
-function loadData(){
-	var loadCountryDataPromise = loadContinentCountryData();
+function loadData(year){
+	var loadCountryDataPromise = loadContinentCountryData(year);
 
 	loadCountryDataPromise.done(function(){
 		loadMap().done(function(){
@@ -26,8 +26,9 @@ var projection = d3.geo.mercator()
 
 var path = d3.geo.path().projection(projection);
 
-function loadContinentCountryData(){
+function loadContinentCountryData(gl_year){
 	var def = $.Deferred();
+	thisYear = gl_year;
 	var loadContinentPromise = loadContinentData(gl_year);
 	loadContinentPromise.done(
 		function(continentReturn){
@@ -99,15 +100,34 @@ function loadMap(){
 }
 
 function drawData(){
-	var dataRange = d3.extent(countryData, 
-		function(d){return d.immCount;});
+	countryData.sort(function(a, b) {
+		if (a.immCount > b.immCount){
+			return -1;
+		}
+		else if (a.immCount < b.immCount){
+			return 1;
+		}
+		return 0;
+	});
+
+	var dataRange = d3.extent(countryData, function(d){return d.immCount;});
 	var colorRange = d3.scale.linear().domain(dataRange).range(['#CCC', '#6B66D4']);
 
 	for (var i = 0; i < countryData.length; i++) {	
-		d3.select("#m_" + countryData[i].CountryID).classed("invalidCountry", false);
-		d3.select("#m_" + countryData[i].CountryID).attr({
+		d3.select("#m_" + countryData[i].CountryID).transition().duration(500).attr({
 			fill: !isNaN(countryData[i].immCount) ? colorRange(countryData[i].immCount) : '#CCC'
 		});
-	}
-	
+	}	
+
+	d3.select("#year").text(thisYear);
+	d3.select("#extent").text("There was " + continentData["All Countries"] + " total immigrants for this year. The country with the most was " + countryData[0].CountryNameMap + " with " + countryData[0].immCount + " immigrants moving to Minnesota.");
+}
+
+function changeYear(year){
+	thisYear = year;
+	var loadCountryDataPromise = loadContinentCountryData(year);
+
+	loadCountryDataPromise.done(function(){
+		drawData();	
+	});
 }
