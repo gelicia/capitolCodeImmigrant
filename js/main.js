@@ -1,5 +1,13 @@
 var minLongLat = [46.0000,94.0000];
 var gl_year = 2010;
+var continentData;
+var countryData;
+
+d3.selection.prototype.moveToFront = function() {
+  return this.each(function(){
+    this.parentNode.appendChild(this);
+  });
+};
 
 function loadData(){
 	var loadCountryDataPromise = loadContinentCountryData();
@@ -8,7 +16,6 @@ function loadData(){
 		loadMap().done(function(){
 			drawData();	
 		});
-		
 	});
 }
 
@@ -17,10 +24,7 @@ var projection = d3.geo.mercator()
     .translate([320, 300])
     .precision(0.1);
 
-var path = d3.geo.path().projection(projection);	
-
-var continentData;
-var countryData;
+var path = d3.geo.path().projection(projection);
 
 function loadContinentCountryData(){
 	var def = $.Deferred();
@@ -86,10 +90,7 @@ function loadMap(){
 			stroke: '#000',
 			'stroke-opacity': 0.5,
 			'stroke-width': 1,
-			'class': function(d){
-				var thisData = _.find(countryData, function(fd){ return d.id == fd.mapID;});
-				return thisData === undefined ? "invalidCountry" : "validCountry";
-			}
+			fill: '#f2f2f2'
 		});
 
 		def.resolve();
@@ -98,13 +99,15 @@ function loadMap(){
 }
 
 function drawData(){
-	var dataRange = d3.extent(countryData, function(d){return d.immCount;});
-	console.log(dataRange);
+	var dataRange = d3.extent(countryData, 
+		function(d){return d.immCount;});
+	var colorRange = d3.scale.linear().domain(dataRange).range(['#CCC', '#6B66D4']);
+
+	for (var i = 0; i < countryData.length; i++) {	
+		d3.select("#m_" + countryData[i].CountryID).classed("invalidCountry", false);
+		d3.select("#m_" + countryData[i].CountryID).attr({
+			fill: !isNaN(countryData[i].immCount) ? colorRange(countryData[i].immCount) : '#CCC'
+		});
+	}
+	
 }
-
-
-d3.selection.prototype.moveToFront = function() {
-  return this.each(function(){
-    this.parentNode.appendChild(this);
-  });
-};
